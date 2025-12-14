@@ -1,0 +1,2 @@
+# This directory contains the ONNX model files.
+# Run `npm run download-model` to download the required model.
