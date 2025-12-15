@@ -1,6 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Enable static export
+  output: 'export',
+
   // Configure headers for SharedArrayBuffer (required for ONNX WASM threading)
+  // Note: These headers must be configured on your web server for static export
   async headers() {
     return [
       {

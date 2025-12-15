@@ -101,9 +101,14 @@ async function loadOrtFromCDN(): Promise<OrtModule> {
  * Check if WebGPU is available in the browser
  */
 export async function checkWebGPUSupport(): Promise<boolean> {
-  if (typeof navigator === 'undefined') return false;
+  if (typeof navigator === 'undefined') {
+    console.log('[WebGPU] Not in browser environment');
+    return false;
+  }
 
   if (!('gpu' in navigator)) {
+    console.log('[WebGPU] navigator.gpu not available - Browser does not support WebGPU');
+    console.log('[WebGPU] Try Chrome/Edge 113+, or enable chrome://flags/#enable-unsafe-webgpu');
     return false;
   }
 
@@ -111,14 +116,17 @@ export async function checkWebGPUSupport(): Promise<boolean> {
     const gpu = (navigator as Navigator & { gpu: GPU }).gpu;
     const adapter = await gpu.requestAdapter();
     if (!adapter) {
+      console.log('[WebGPU] No adapter available - GPU may not support WebGPU');
       return false;
     }
     const device = await adapter.requestDevice();
+    console.log('[WebGPU] ✓ Available and working');
+    console.log('[WebGPU] Adapter:', adapter);
     // Clean up
     device.destroy();
     return true;
   } catch (error) {
-    console.warn('WebGPU check failed:', error);
+    console.error('[WebGPU] Error during initialization:', error);
     return false;
   }
 }
@@ -184,8 +192,8 @@ export async function loadModel(
         provider = 'webgpu';
         onProgress?.('Model loaded with WebGPU');
       } catch (webgpuError) {
-        console.warn('WebGPU loading failed, falling back to WASM:', webgpuError);
-        onProgress?.('WebGPU failed, loading with WASM...');
+        console.error('[WebGPU] Model loading failed:', webgpuError);
+        onProgress?.('Loading with WASM...');
         session = await ort.InferenceSession.create(MODEL_PATH, {
           executionProviders: ['wasm'],
           graphOptimizationLevel: 'all',
