@@ -22,6 +22,7 @@ import {
   DownloadButton,
 } from '@/components';
 import {
+  ENABLE_ADS,
   PROGRESS_STATES,
   BACKGROUND_MODES,
   type ProgressState,
@@ -218,9 +219,11 @@ export default function HomePage() {
             </div>
 
             {/* Header Ad Slot */}
-            <div className="hidden lg:block">
-              <AdSlot position="header" />
-            </div>
+            {ENABLE_ADS && (
+              <div className="hidden lg:block">
+                <AdSlot position="header" />
+              </div>
+            )}
           </div>
         </div>
       </header>
@@ -339,9 +342,11 @@ export default function HomePage() {
             )}
 
             {/* Sidebar Ad Slot */}
-            <div className="flex justify-center">
-              <AdSlot position="sidebar" />
-            </div>
+            {ENABLE_ADS && (
+              <div className="flex justify-center">
+                <AdSlot position="sidebar" />
+              </div>
+            )}
 
             {/* HQ Mode placeholder */}
             <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-4 border border-primary-200">
@@ -369,9 +374,11 @@ export default function HomePage() {
       <footer className="bg-white border-t border-gray-200 mt-auto">
         <div className="max-w-7xl mx-auto px-4 py-6">
           {/* Footer Ad */}
-          <div className="flex justify-center mb-6">
-            <AdSlot position="footer" />
-          </div>
+          {ENABLE_ADS && (
+            <div className="flex justify-center mb-6">
+              <AdSlot position="footer" />
+            </div>
+          )}
 
           <div className="text-center text-sm text-gray-500">
             <p className="mb-2">

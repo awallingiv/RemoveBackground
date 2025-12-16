@@ -61,3 +61,6 @@ export const BACKGROUND_MODES = {
 } as const;
 
 export type BackgroundMode = (typeof BACKGROUND_MODES)[keyof typeof BACKGROUND_MODES];
+
+// Feature flags
+export const ENABLE_ADS = false; // Set to true to enable advertisement slots
