@@ -199,7 +199,7 @@ export default function HomePage() {
       {/* Header */}
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className={`flex items-center ${ENABLE_ADS ? 'justify-between' : 'justify-center'}`}>
             <div className="flex items-center gap-3">
               {/* Logo */}
               <div className="w-10 h-10 bg-gradient-to-br from-primary-500 to-primary-700 rounded-xl flex items-center justify-center">
@@ -230,9 +230,9 @@ export default function HomePage() {
 
       {/* Main Content */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 py-8">
-        <div className="flex gap-8">
+        <div className={`flex gap-8 ${!ENABLE_ADS ? 'justify-center' : ''}`}>
           {/* Main workspace */}
-          <div className="flex-1 min-w-0">
+          <div className={`flex-1 min-w-0 ${!ENABLE_ADS ? 'max-w-4xl' : ''}`}>
             {!processedImage ? (
               /* Upload state */
               <div className="space-y-6">
@@ -259,6 +259,48 @@ export default function HomePage() {
                     />
                   </svg>
                   <span>Your images are processed locally and never uploaded to any server.</span>
+                </div>
+
+                {/* How it works disclaimer */}
+                <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-6 border border-blue-100 shadow-sm">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+                      <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="flex-1 space-y-3">
+                      <h3 className="font-semibold text-gray-900 text-lg">How It Works</h3>
+                      <div className="space-y-2 text-sm text-gray-700 leading-relaxed">
+                        <p>
+                          This tool uses a <strong>U²-Net AI model</strong> running directly in your browser via ONNX Runtime Web. 
+                          Processing happens entirely on your device—no server uploads required.
+                        </p>
+                        <p>
+                          <strong>Performance depends on your hardware:</strong>
+                        </p>
+                        <ul className="ml-4 space-y-1 list-disc">
+                          <li>
+                            <strong className="text-blue-700">With WebGPU/GPU:</strong> Fastest processing (3-10 seconds) 
+                            on Chrome 113+, Edge 113+, or Safari 17+
+                          </li>
+                          <li>
+                            <strong className="text-indigo-700">CPU Only (WASM):</strong> Slower processing (10-30+ seconds) 
+                            on older browsers or devices without GPU acceleration
+                          </li>
+                        </ul>
+                        <p className="text-xs text-gray-600 italic mt-2">
+                          💡 Tip: A modern computer with a dedicated GPU and a WebGPU-compatible browser provides 
+                          the best experience. Older devices may take longer to process images.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -316,40 +358,39 @@ export default function HomePage() {
           </div>
 
           {/* Sidebar */}
-          <div className="hidden lg:block w-80 flex-shrink-0 space-y-6">
-            {/* Image metadata */}
-            {processedImage && (
-              <ImageMetadata
-                metadata={processedImage.metadata}
-                wasDownscaled={processedImage.wasDownscaled}
-                workingDimensions={processedImage.workingDimensions}
-              />
-            )}
-
-            {/* Background options */}
-            {processedImage && (
-              <div className="bg-white rounded-xl p-4 border border-gray-200">
-                <BackgroundOptions
-                  mode={backgroundMode}
-                  solidColor={solidColor}
-                  blurRadius={blurRadius}
-                  onModeChange={setBackgroundMode}
-                  onColorChange={setSolidColor}
-                  onBlurRadiusChange={setBlurRadius}
-                  disabled={!hasResult}
+          {ENABLE_ADS && (
+            <div className="hidden lg:block w-80 flex-shrink-0 space-y-6">
+              {/* Image metadata */}
+              {processedImage && (
+                <ImageMetadata
+                  metadata={processedImage.metadata}
+                  wasDownscaled={processedImage.wasDownscaled}
+                  workingDimensions={processedImage.workingDimensions}
                 />
-              </div>
-            )}
+              )}
 
-            {/* Sidebar Ad Slot */}
-            {ENABLE_ADS && (
+              {/* Background options */}
+              {processedImage && (
+                <div className="bg-white rounded-xl p-4 border border-gray-200">
+                  <BackgroundOptions
+                    mode={backgroundMode}
+                    solidColor={solidColor}
+                    blurRadius={blurRadius}
+                    onModeChange={setBackgroundMode}
+                    onColorChange={setSolidColor}
+                    onBlurRadiusChange={setBlurRadius}
+                    disabled={!hasResult}
+                  />
+                </div>
+              )}
+
+              {/* Sidebar Ad Slot */}
               <div className="flex justify-center">
                 <AdSlot position="sidebar" />
               </div>
-            )}
 
-            {/* HQ Mode placeholder */}
-            <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-4 border border-primary-200">
+              {/* HQ Mode placeholder */}
+              <div className="bg-gradient-to-br from-primary-50 to-primary-100 rounded-xl p-4 border border-primary-200">
               <div className="flex items-center gap-2 mb-2">
                 <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
@@ -366,7 +407,8 @@ export default function HomePage() {
                 Process images at full resolution with server-side AI for maximum quality.
               </p>
             </div>
-          </div>
+            </div>
+          )}
         </div>
       </main>
 
