@@ -65,7 +65,10 @@ export default function HomePage() {
       // Reset state
       setProgressState(PROGRESS_STATES.IDLE);
       setStatusMessage('');
-      setResultDataUrl(null);
+      setResultDataUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return null;
+      });
       maskRef.current = null;
 
       // Process the file
@@ -123,7 +126,10 @@ export default function HomePage() {
 
       const blob = await canvasToBlob(outputCanvas);
       const resultUrl = URL.createObjectURL(blob);
-      setResultDataUrl(resultUrl);
+      setResultDataUrl((prev) => {
+        if (prev) URL.revokeObjectURL(prev);
+        return resultUrl;
+      });
 
       setProgressState(PROGRESS_STATES.COMPLETE);
       const provider = getCurrentProvider();
@@ -148,7 +154,10 @@ export default function HomePage() {
 
     const blob = await canvasToBlob(outputCanvas);
     const resultUrl = URL.createObjectURL(blob);
-    setResultDataUrl(resultUrl);
+    setResultDataUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return resultUrl;
+    });
   }, [processedImage, backgroundMode, solidColor, blurRadius]);
 
   // Update result when background options change
@@ -180,7 +189,10 @@ export default function HomePage() {
   const handleReset = useCallback(() => {
     setProcessedImage(null);
     setOriginalDataUrl(null);
-    setResultDataUrl(null);
+    setResultDataUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
     setProgressState(PROGRESS_STATES.IDLE);
     setStatusMessage('');
     maskRef.current = null;

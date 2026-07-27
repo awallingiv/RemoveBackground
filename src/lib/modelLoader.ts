@@ -94,6 +94,12 @@ async function loadOrtFromCDN(): Promise<OrtModule> {
     document.head.appendChild(script);
   });
 
+  // If loading fails, clear the cached promise so subsequent calls retry
+  // instead of reusing the same rejected promise forever.
+  loadPromise.catch(() => {
+    loadPromise = null;
+  });
+
   return loadPromise;
 }
 
