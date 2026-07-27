@@ -65,7 +65,7 @@ async function loadOrtFromCDN(): Promise<OrtModule> {
     return loadPromise;
   }
 
-  loadPromise = new Promise<OrtModule>((resolve, reject) => {
+  const currentLoadPromise: Promise<OrtModule> = new Promise<OrtModule>((resolve, reject) => {
     // Check if already loaded
     if (typeof window !== 'undefined' && (window as unknown as { ort?: OrtModule }).ort) {
       ortModule = (window as unknown as { ort: OrtModule }).ort;
@@ -94,13 +94,19 @@ async function loadOrtFromCDN(): Promise<OrtModule> {
     document.head.appendChild(script);
   });
 
+  loadPromise = currentLoadPromise;
+
   // If loading fails, clear the cached promise so subsequent calls retry
-  // instead of reusing the same rejected promise forever.
-  loadPromise.catch(() => {
-    loadPromise = null;
+  // instead of reusing the same rejected promise forever. Only clear it if
+  // it still refers to this specific promise, in case a newer load has
+  // already replaced it by the time this rejection handler runs.
+  currentLoadPromise.catch(() => {
+    if (loadPromise === currentLoadPromise) {
+      loadPromise = null;
+    }
   });
 
-  return loadPromise;
+  return currentLoadPromise;
 }
 
 /**
